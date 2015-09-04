@@ -27,11 +27,17 @@ public abstract class AbstractShell {
     private static CommandLineParser parser = new PosixParser();
     private Environment env = new Environment();
 
-    protected void processArguments(String[] arguments, ConsoleReader reader) {
+    protected void preProcessInitializationArguments(String[] arguments) {
+        //
+    }
+
+    protected void postProcessInitializationArguments(String[] arguments, ConsoleReader reader) {
          //
     }
 
     public final void run(String[] arguments) throws Exception {
+        preProcessInitializationArguments(arguments);
+
         initialize(this.env);
         
         // if the subclass hasn't defined a prompt, do so for them.
@@ -58,7 +64,7 @@ public abstract class AbstractShell {
 
         AnsiConsole.systemInstall();
 
-        processArguments(arguments, reader);
+        postProcessInitializationArguments(arguments, reader);
 
         acceptCommands(reader);
 
