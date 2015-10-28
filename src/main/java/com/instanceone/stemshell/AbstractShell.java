@@ -79,7 +79,10 @@ public abstract class AbstractShell {
         if (command != null) {
             System.out.println("Running: " + command.getName() + " ("
                     + command.getClass().getName() + ")");
-            String[] cmdArgs = Arrays.copyOfRange(argv, 1, argv.length);
+            String[] cmdArgs = null;
+            if (argv.length > 1) {
+                cmdArgs = Arrays.copyOfRange(argv, 1, argv.length);
+            }
             CommandLine cl = parse(command, cmdArgs);
             if (cl != null) {
                 try {
