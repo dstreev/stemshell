@@ -7,9 +7,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import com.jcabi.manifests.Manifests;
 import jline.console.ConsoleReader;
 import jline.console.completer.AggregateCompleter;
 import jline.console.completer.ArgumentCompleter;
@@ -44,17 +53,17 @@ public abstract class AbstractShell {
         if(env.getPrompt() == null){
             env.setPrompt(getName() + "$");
         }
-        
+
         // banner
         InputStream is = this.getClass().getResourceAsStream("/banner.txt");
         if(is != null){
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             String line = null;
             while((line = br.readLine()) != null){
-                System.out.println(line);
+                // Replace Token.
+                System.out.println(substituteVariables(line));
             }
         }
-
 
         // create reader and add completers
         ConsoleReader reader = new ConsoleReader();
@@ -68,6 +77,31 @@ public abstract class AbstractShell {
 
         acceptCommands(reader);
 
+    }
+
+    public static String substituteVariables(String template) {
+        Pattern pattern = Pattern.compile("\\$\\{(.+?)\\}");
+        Matcher matcher = pattern.matcher(template);
+        // StringBuilder cannot be used here because Matcher expects StringBuffer
+        StringBuffer buffer = new StringBuffer();
+        while (matcher.find()) {
+            String matchStr = matcher.group(1);
+//            System.out.println("Found variable: " + matchStr);
+            try {
+                String replacement = Manifests.read(matchStr);
+                if (replacement != null) {
+//                    System.out.println("Replacement Value: " + replacement);
+                    // quote to work properly with $ and {,} signs
+                    matcher.appendReplacement(buffer, replacement != null ? Matcher.quoteReplacement(replacement) : "null");
+                } else {
+//                    System.out.println("No replacement found for: " + matchStr);
+                }
+            } catch (IllegalArgumentException iae) {
+                iae.printStackTrace();
+            }
+        }
+        matcher.appendTail(buffer);
+        return buffer.toString();
     }
 
     public void processInput(String line, ConsoleReader reader) {
