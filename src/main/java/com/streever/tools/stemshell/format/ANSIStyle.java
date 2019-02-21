@@ -1,6 +1,6 @@
 // Copyright (c) 2012 P. Taylor Goetz (ptgoetz@gmail.com)
 
-package com.instanceone.stemshell.format;
+package com.streever.tools.stemshell.format;
 
 public class ANSIStyle {
     public static final int OFF = 0;

@@ -1,6 +1,6 @@
 // Copyright (c) 2012 P. Taylor Goetz (ptgoetz@gmail.com)
 
-package com.instanceone.stemshell.commands;
+package com.streever.tools.stemshell.commands;
 
 import jline.console.ConsoleReader;
 import jline.console.completer.AggregateCompleter;
@@ -11,9 +11,9 @@ import jline.console.completer.StringsCompleter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 
-import com.instanceone.stemshell.Environment;
-import com.instanceone.stemshell.command.AbstractCommand;
-import com.instanceone.stemshell.command.Command;
+import com.streever.tools.stemshell.Environment;
+import com.streever.tools.stemshell.command.AbstractCommand;
+import com.streever.tools.stemshell.command.Command;
 
 public class Help extends AbstractCommand {
     private Environment env;

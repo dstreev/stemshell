@@ -1,20 +1,14 @@
 // Copyright (c) 2012 Health Market Science, Inc.
 
-package com.instanceone.stemshell;
+package com.streever.tools.stemshell;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
-import java.util.Set;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,11 +24,24 @@ import jline.console.history.History;
 import org.apache.commons.cli.*;
 import org.fusesource.jansi.AnsiConsole;
 
-import com.instanceone.stemshell.command.Command;
+import com.streever.tools.stemshell.command.Command;
 
-public abstract class AbstractShell {
+public abstract class AbstractShell implements Shell {
     private static CommandLineParser parser = new PosixParser();
-    private Environment env = new Environment();
+    private Environment env = null; //new Environment();
+
+//    public AbstractShell(Environment env) {
+//        this.env = env;
+//    }
+
+
+    protected Environment getEnv() {
+        return env;
+    }
+
+    protected void setEnv(Environment env) {
+        this.env = env;
+    }
 
     protected void preProcessInitializationArguments(String[] arguments) {
         //
@@ -47,7 +54,7 @@ public abstract class AbstractShell {
     public final void run(String[] arguments) throws Exception {
         preProcessInitializationArguments(arguments);
 
-        initialize(this.env);
+        initialize();
         
         // if the subclass hasn't defined a prompt, do so for them.
         if(env.getPrompt() == null){
@@ -223,8 +230,6 @@ public abstract class AbstractShell {
         return hist;
 
     }
-
-    public abstract void initialize(Environment env) throws Exception;
 
     public abstract String getName();
 

@@ -1,6 +1,6 @@
 // Copyright (c) 2012 Health Market Science, Inc.
 
-package com.instanceone.stemshell.commands;
+package com.streever.tools.stemshell.commands;
 
 import java.util.ListIterator;
 
@@ -9,8 +9,8 @@ import jline.console.history.History.Entry;
 
 import org.apache.commons.cli.CommandLine;
 
-import com.instanceone.stemshell.Environment;
-import com.instanceone.stemshell.command.AbstractCommand;
+import com.streever.tools.stemshell.Environment;
+import com.streever.tools.stemshell.command.AbstractCommand;
 
 public class HistoryCmd extends AbstractCommand {
 

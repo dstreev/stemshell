@@ -1,25 +1,21 @@
 // Copyright (c) 2012 P. Taylor Goetz (ptgoetz@gmail.com)
 
-package com.instanceone.stemshell;
+package com.streever.tools.stemshell;
+
+import com.streever.tools.stemshell.command.Command;
 
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
 
-import com.instanceone.stemshell.command.Command;
+public class BasicEnvironmentImpl implements Environment {
 
-public class Environment {
-    
     private String prompt = null;
     private Properties props = new Properties();
     private HashMap<String, Object> values = new HashMap<String, Object>();
-    
-    public Environment(){
-    }
-    
+
     private HashMap<String, Command> commands = new HashMap<String, Command>();
-    
-    
+
     public void addCommand(Command cmd){
         this.commands.put(cmd.getName(), cmd);
     }

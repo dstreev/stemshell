@@ -1,6 +1,6 @@
 // Copyright (c) 2012 P. Taylor Goetz (ptgoetz@gmail.com)
 
-package com.instanceone.stemshell.command;
+package com.streever.tools.stemshell.command;
 
 import jline.console.completer.Completer;
 import jline.console.completer.NullCompleter;
