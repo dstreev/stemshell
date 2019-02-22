@@ -2,6 +2,7 @@
 
 package com.streever.tools.stemshell.command;
 
+import com.streever.tools.stemshell.Environment;
 import jline.console.completer.Completer;
 import jline.console.completer.NullCompleter;
 
@@ -40,13 +41,13 @@ public abstract class AbstractCommand implements Command{
         return getName() + " [OPTION ...] [ARGS ...]";
     }
     
-    protected static void logv(CommandLine cmd, String log){
-        if(cmd.hasOption("v")){
+    protected static void logv(Environment env, String log){
+        if(env.isVerbose()){
             System.out.println(log);
         }
     }
     
-    protected static void log(CommandLine cmd, String log){
+    protected static void log(Environment env, String log){
             System.out.println(log);
     }
 

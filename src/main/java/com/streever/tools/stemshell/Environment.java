@@ -9,16 +9,6 @@ import java.util.Set;
 
 public interface Environment {
     
-//    private String prompt = null;
-//    private Properties props = new Properties();
-//    private HashMap<String, Object> values = new HashMap<String, Object>();
-    
-//    public Environment(){
-//    }
-    
-//    private HashMap<String, Command> commands = new HashMap<String, Command>();
-    
-    
     void addCommand(Command cmd);
 
     Command getCommand(String name);
@@ -30,6 +20,12 @@ public interface Environment {
     Properties getProperties();
     void setValue(String key, Object value);
     Object getValue(String key);
-    String getPrompt();
-    void setPrompt(String prompt);
+
+    String getCurrentPrompt();
+    void setCurrentPrompt(String prompt);
+    String getDefaultPrompt();
+    void setDefaultPrompt(String prompt);
+
+    Boolean isVerbose();
+    void setVerbose(Boolean verbose);
 }

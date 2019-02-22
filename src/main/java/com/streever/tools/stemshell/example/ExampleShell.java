@@ -23,6 +23,7 @@ public class ExampleShell extends AbstractShell {
 
         Environment lclEnv = new BasicEnvironmentImpl();
         setEnv(lclEnv);
+        
         getEnv().addCommand(new Exit("exit"));
         getEnv().addCommand(new Env("env"));
         getEnv().addCommand(new Help("help", getEnv()));

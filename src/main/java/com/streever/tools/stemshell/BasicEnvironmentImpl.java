@@ -10,7 +10,10 @@ import java.util.Set;
 
 public class BasicEnvironmentImpl implements Environment {
 
-    private String prompt = null;
+    private String defaultPrompt = "basic:$";
+    private String currentPrompt = null;
+    private Boolean verbose = Boolean.FALSE;
+    
     private Properties props = new Properties();
     private HashMap<String, Object> values = new HashMap<String, Object>();
 
@@ -53,11 +56,30 @@ public class BasicEnvironmentImpl implements Environment {
     }
     
 
-    public String getPrompt(){
-        return this.prompt;
+    public String getDefaultPrompt(){
+        return this.defaultPrompt;
     }
     
-    public void setPrompt(String prompt){
-        this.prompt = prompt;
+    public void setDefaultPrompt(String prompt){
+        this.defaultPrompt = prompt;
+    }
+
+    @Override
+    public String getCurrentPrompt() {
+        return currentPrompt;
+    }
+
+    @Override
+    public void setCurrentPrompt(String currentPrompt) {
+        this.currentPrompt = currentPrompt;
+    }
+
+    public Boolean isVerbose() {
+        return verbose;
+    }
+
+    @Override
+    public void setVerbose(Boolean verbose) {
+        this.verbose = verbose;
     }
 }

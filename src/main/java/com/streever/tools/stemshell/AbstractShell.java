@@ -29,11 +29,7 @@ import com.streever.tools.stemshell.command.Command;
 public abstract class AbstractShell implements Shell {
     private static CommandLineParser parser = new PosixParser();
     private Environment env = null; //new Environment();
-
-//    public AbstractShell(Environment env) {
-//        this.env = env;
-//    }
-
+    private String bannerResource = "/banner.txt";
 
     protected Environment getEnv() {
         return env;
@@ -41,6 +37,14 @@ public abstract class AbstractShell implements Shell {
 
     protected void setEnv(Environment env) {
         this.env = env;
+    }
+
+    public String getBannerResource() {
+        return bannerResource;
+    }
+
+    public void setBannerResource(String bannerResource) {
+        this.bannerResource = bannerResource;
     }
 
     protected void preProcessInitializationArguments(String[] arguments) {
@@ -57,12 +61,12 @@ public abstract class AbstractShell implements Shell {
         initialize();
         
         // if the subclass hasn't defined a prompt, do so for them.
-        if(env.getPrompt() == null){
-            env.setPrompt(getName() + "$");
+        if(getEnv().getDefaultPrompt() == null){
+            getEnv().setDefaultPrompt("$");
         }
 
         // banner
-        InputStream is = this.getClass().getResourceAsStream("/banner.txt");
+        InputStream is = this.getClass().getResourceAsStream(getBannerResource());
         if(is != null){
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
             String line = null;
@@ -74,6 +78,7 @@ public abstract class AbstractShell implements Shell {
 
         // create reader and add completers
         ConsoleReader reader = new ConsoleReader();
+
         reader.addCompleter(initCompleters(env));
         // add history support
         reader.setHistory(initHistory());
@@ -118,8 +123,10 @@ public abstract class AbstractShell implements Shell {
 
         Command command = env.getCommand(cmdName);
         if (command != null) {
-            System.out.println("Running: " + command.getName() + " ("
-                    + command.getClass().getName() + ")");
+//            if (getEnv().isVerbose()) {
+//                System.out.println("Running: " + command.getName() + " ("
+//                        + command.getClass().getName() + ")");
+//            }
             String[] cmdArgs = null;
             if (argv.length > 1) {
                 cmdArgs = Arrays.copyOfRange(argv, 1, argv.length);
@@ -148,7 +155,7 @@ public abstract class AbstractShell implements Shell {
 
     private void acceptCommands(ConsoleReader reader) throws IOException {
         String line;
-        while ((line = reader.readLine(this.env.getPrompt() + " ")) != null) {
+        while ((line = reader.readLine(getEnv().getCurrentPrompt() + " ")) != null) {
             processInput(line, reader);
         }
     }

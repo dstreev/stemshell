@@ -34,11 +34,11 @@ public class Help extends AbstractCommand {
     public void execute(Environment env, CommandLine cmd, ConsoleReader reader) {
         if (cmd.getArgs().length == 0) {
             for (String str : env.commandList()) {
-                log(cmd, str);
+                log(env, str);
             }
         } else {
             Command command = env.getCommand(cmd.getArgs()[0]);
-            logv(cmd, "Get Help for command: " + command.getName() + "(" + command.getClass().getName() + ")");
+            logv(env, "Get Help for command: " + command.getName() + "(" + command.getClass().getName() + ")");
             printHelp(command);
         }
 
