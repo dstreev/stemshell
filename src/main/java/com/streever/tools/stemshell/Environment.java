@@ -28,4 +28,8 @@ public interface Environment {
 
     Boolean isVerbose();
     void setVerbose(Boolean verbose);
+
+    Boolean isDebug();
+    void setDebug(Boolean debug);
+
 }
