@@ -2,6 +2,7 @@
 
 package com.streever.tools.stemshell.command;
 
+import com.streever.tools.stemshell.Context;
 import jline.console.ConsoleReader;
 import jline.console.completer.Completer;
 
@@ -18,7 +19,7 @@ public interface Command {
     
     String getName();
     
-    void execute(Environment env, CommandLine cmd, ConsoleReader reader);
+    void execute(Context ctx, CommandLine cmd, ConsoleReader reader);
     
     Options getOptions();
     

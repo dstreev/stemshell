@@ -29,6 +29,9 @@ import com.streever.tools.stemshell.command.Command;
 public abstract class AbstractShell implements Shell {
     private static CommandLineParser parser = new PosixParser();
     private Environment env = null; //new Environment();
+    private Context ctx = null;
+    ConsoleReader reader = null;
+
     private String bannerResource = "/banner.txt";
 
     protected Environment getEnv() {
@@ -37,6 +40,19 @@ public abstract class AbstractShell implements Shell {
 
     protected void setEnv(Environment env) {
         this.env = env;
+    }
+
+    protected Context getContext() { return this.ctx; }
+    protected void setContext(Context ctx) {
+
+        reader.addCompleter(initCompleters(ctx));
+        // add history support
+        reader.setHistory(initHistory());
+
+        AnsiConsole.systemInstall();
+
+        postProcessInitializationArguments(arguments, reader);
+
     }
 
     public String getBannerResource() {
@@ -79,18 +95,25 @@ public abstract class AbstractShell implements Shell {
         // create reader and add completers
         ConsoleReader reader = new ConsoleReader();
 
-        reader.addCompleter(initCompleters(env));
+        initParentContext(reader);
+
+
+//        reader.addCompleter(initCompleters(env));
         // add history support
-        reader.setHistory(initHistory());
+//        reader.setHistory(initHistory());
 
         AnsiConsole.systemInstall();
 
-        postProcessInitializationArguments(arguments, reader);
+//        postProcessInitializationArguments(arguments, reader);
 
         acceptCommands(reader);
 
     }
 
+    protected void initParentContext(ConsoleReader reader) {
+        //
+    }
+    
     public static String substituteVariables(String template) {
         Pattern pattern = Pattern.compile("\\$\\{(.+?)\\}");
         Matcher matcher = pattern.matcher(template);
@@ -121,7 +144,7 @@ public abstract class AbstractShell implements Shell {
         String[] argv = line.split("\\s+(?=((\\\\[\\\\\"]|[^\\\\\"])*\"(\\\\[\\\\\"]|[^\\\\\"])*\")*(\\\\[\\\\\"]|[^\\\\\"])*$)");
         String cmdName = argv[0];
 
-        Command command = env.getCommand(cmdName);
+        Command command = getContext().getCommand(cmdName);
         if (command != null) {
 //            if (getEnv().isVerbose()) {
 //                System.out.println("Running: " + command.getName() + " ("
@@ -134,7 +157,7 @@ public abstract class AbstractShell implements Shell {
             CommandLine cl = parse(command, cmdArgs);
             if (cl != null) {
                 try {
-                    command.execute(env, cl, reader);
+                    command.execute(getContext(), cl, reader);
                 }
                 catch (Throwable e) {
                     System.out.println("Command failed with error: "
@@ -155,7 +178,7 @@ public abstract class AbstractShell implements Shell {
 
     private void acceptCommands(ConsoleReader reader) throws IOException {
         String line;
-        while ((line = reader.readLine(getEnv().getCurrentPrompt() + " ")) != null) {
+        while ((line = reader.readLine(getContext().getCurrentPrompt() + " ")) != null) {
             processInput(line, reader);
         }
     }
@@ -172,10 +195,10 @@ public abstract class AbstractShell implements Shell {
         return retval;
     }
     
-    private Completer initCompleters(Environment env){
+    private Completer initCompleters(Context ctx){
         // create completers
         ArrayList<Completer> completers = new ArrayList<Completer>();
-        for (String cmdName : env.commandList()) {
+        for (String cmdName : ctx.commandList()) {
             // command name
             StringsCompleter sc = new StringsCompleter(cmdName);
 
@@ -183,7 +206,7 @@ public abstract class AbstractShell implements Shell {
             // add a completer for the command name
             cmdCompleters.add(sc);
             // add the completer for the command
-            cmdCompleters.add(env.getCommand(cmdName).getCompleter());
+            cmdCompleters.add(ctx.getCommand(cmdName).getCompleter());
             // add a terminator for the command
             // cmdCompleters.add(new NullCompleter());
 

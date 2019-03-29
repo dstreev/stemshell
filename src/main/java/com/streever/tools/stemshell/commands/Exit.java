@@ -2,6 +2,7 @@
 
 package com.streever.tools.stemshell.commands;
 
+import com.streever.tools.stemshell.Context;
 import jline.console.ConsoleReader;
 
 import org.apache.commons.cli.CommandLine;
@@ -15,7 +16,7 @@ public class Exit extends AbstractCommand {
         super(name);
     }
 
-    public void execute(Environment env, CommandLine cmd, ConsoleReader reader) {
+    public void execute(Context ctx, CommandLine cmd, ConsoleReader reader) {
         System.exit(0);
     }
 

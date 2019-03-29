@@ -4,6 +4,7 @@ package com.streever.tools.stemshell.commands;
 
 import java.util.Properties;
 
+import com.streever.tools.stemshell.Context;
 import jline.console.ConsoleReader;
 
 import org.apache.commons.cli.CommandLine;
@@ -18,19 +19,19 @@ public class Env extends AbstractCommand {
         super(name);
     }
 
-    public void execute(Environment env, CommandLine cmd, ConsoleReader reader) {
+    public void execute(Context ctx, CommandLine cmd, ConsoleReader reader) {
         if (cmd.hasOption("l") || !cmd.hasOption("s")) {
-            Properties props = env.getProperties();
-            log(env, "Local Properties:");
+            Properties props = ctx.getProperties();
+            log(ctx.getEnvironment(), "Local Properties:");
             for (Object key : props.keySet()) {
-                log(env, "\t" + key + "=" + props.get(key));
+                log(ctx.getEnvironment(), "\t" + key + "=" + props.get(key));
             }
         }
         if (cmd.hasOption("s")) {
-            log(env, "System Properties:");
+            log(ctx.getEnvironment(), "System Properties:");
             Properties props = System.getProperties();
             for (Object key : props.keySet()) {
-                log(env, "\t" + key + "=" + props.get(key));
+                log(ctx.getEnvironment(), "\t" + key + "=" + props.get(key));
             }
         }
     }

@@ -2,6 +2,7 @@
 
 package com.streever.tools.stemshell.commands;
 
+import com.streever.tools.stemshell.Context;
 import jline.console.ConsoleReader;
 import jline.console.completer.AggregateCompleter;
 import jline.console.completer.Completer;
@@ -16,13 +17,13 @@ import com.streever.tools.stemshell.command.AbstractCommand;
 import com.streever.tools.stemshell.command.Command;
 
 public class Help extends AbstractCommand {
-    private Environment env;
+    private Context context;
 
-    public Help(String name, Environment env) {
+    public Help(String name, Context context) {
         super(name);
-        this.env = env;
+        this.context = context;
         
-        StringsCompleter strCompleter = new StringsCompleter(this.env.commandList());
+        StringsCompleter strCompleter = new StringsCompleter(this.context.commandList());
         NullCompleter nullCompleter = new NullCompleter();
         Completer completer = new AggregateCompleter(strCompleter, nullCompleter);
         
@@ -31,14 +32,14 @@ public class Help extends AbstractCommand {
     }
     
 
-    public void execute(Environment env, CommandLine cmd, ConsoleReader reader) {
+    public void execute(Context ctx, CommandLine cmd, ConsoleReader reader) {
         if (cmd.getArgs().length == 0) {
-            for (String str : env.commandList()) {
-                log(env, str);
+            for (String str : ctx.commandList()) {
+                log(ctx.getEnvironment(), str);
             }
         } else {
-            Command command = env.getCommand(cmd.getArgs()[0]);
-            logv(env, "Get Help for command: " + command.getName() + "(" + command.getClass().getName() + ")");
+            Command command = ctx.getCommand(cmd.getArgs()[0]);
+            logv(ctx.getEnvironment(), "Get Help for command: " + command.getName() + "(" + command.getClass().getName() + ")");
             printHelp(command);
         }
 
