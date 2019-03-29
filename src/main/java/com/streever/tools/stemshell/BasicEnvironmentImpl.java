@@ -13,6 +13,7 @@ public class BasicEnvironmentImpl implements Environment {
     private String defaultPrompt = "basic:$";
     private String currentPrompt = null;
     private Boolean verbose = Boolean.FALSE;
+    private Boolean debug = Boolean.FALSE;
     
     private Properties props = new Properties();
     private HashMap<String, Object> values = new HashMap<String, Object>();
@@ -81,5 +82,15 @@ public class BasicEnvironmentImpl implements Environment {
     @Override
     public void setVerbose(Boolean verbose) {
         this.verbose = verbose;
+    }
+
+    @Override
+    public Boolean isDebug() {
+        return debug;
+    }
+
+    @Override
+    public void setDebug(Boolean debug) {
+        this.debug = debug;
     }
 }
