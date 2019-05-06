@@ -48,7 +48,11 @@ public abstract class AbstractCommand implements Command{
     }
     
     protected static void log(Environment env, String log){
-            System.out.println(log);
+        System.out.println(log);
+    }
+
+    protected static void loge(Environment env, String log){
+        System.err.println(log);
     }
 
     public Completer getCompleter() {
