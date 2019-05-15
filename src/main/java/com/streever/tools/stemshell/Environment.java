@@ -31,4 +31,8 @@ public interface Environment {
 
     void setDebug(Boolean debug);
     Boolean isDebug();
+
+    Boolean isSilent();
+    void setSilent(Boolean verbose);
+
 }

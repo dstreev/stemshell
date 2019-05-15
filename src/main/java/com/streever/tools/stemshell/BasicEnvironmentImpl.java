@@ -14,6 +14,7 @@ public class BasicEnvironmentImpl implements Environment {
     private String currentPrompt = null;
     private Boolean verbose = Boolean.FALSE;
     private Boolean debug = Boolean.FALSE;
+    private Boolean silent = Boolean.FALSE;
     
     private Properties props = new Properties();
     private HashMap<String, Object> values = new HashMap<String, Object>();
@@ -92,5 +93,14 @@ public class BasicEnvironmentImpl implements Environment {
     @Override
     public void setDebug(Boolean debug) {
         this.debug = debug;
+    }
+
+    public Boolean isSilent() {
+        return silent;
+    }
+
+    @Override
+    public void setSilent(Boolean silent) {
+        this.silent = silent;
     }
 }

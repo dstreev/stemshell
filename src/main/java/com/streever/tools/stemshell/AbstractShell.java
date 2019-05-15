@@ -30,6 +30,7 @@ public abstract class AbstractShell implements Shell {
     private static CommandLineParser parser = new PosixParser();
     private Environment env = null; //new Environment();
     private String bannerResource = "/banner.txt";
+//    private boolean silent = false;
 
     protected Environment getEnv() {
         return env;
@@ -45,6 +46,29 @@ public abstract class AbstractShell implements Shell {
 
     public void setBannerResource(String bannerResource) {
         this.bannerResource = bannerResource;
+    }
+
+//    public boolean isSilent() {
+//        return silent;
+//    }
+//
+//    public void setSilent(boolean silent) {
+//        this.silent = silent;
+//        getEnv().setSilent(silent);
+//    }
+
+    protected static void logv(Environment env, String log){
+        if(env.isVerbose()){
+            System.out.println(log);
+        }
+    }
+
+    protected static void log(Environment env, String log){
+        System.out.println(log);
+    }
+
+    protected static void loge(Environment env, String log){
+        System.err.println(log);
     }
 
     protected void preProcessInitializationArguments(String[] arguments) {
@@ -66,13 +90,15 @@ public abstract class AbstractShell implements Shell {
         }
 
         // banner
-        InputStream is = this.getClass().getResourceAsStream(getBannerResource());
-        if(is != null){
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            String line = null;
-            while((line = br.readLine()) != null){
-                // Replace Token.
-                System.out.println(substituteVariables(line));
+        if (!getEnv().isSilent()) {
+            InputStream is = this.getClass().getResourceAsStream(getBannerResource());
+            if (is != null) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    // Replace Token.
+                    log(env, substituteVariables(line));
+                }
             }
         }
 
@@ -137,10 +163,10 @@ public abstract class AbstractShell implements Shell {
                     command.execute(env, cl, reader);
                 }
                 catch (Throwable e) {
-                    System.out.println("Command failed with error: "
+                    loge(env,"Command failed with error: "
                             + e.getMessage());
                     if (cl.hasOption("v")) {
-                        e.printStackTrace();
+                        loge(env,e.getMessage());
                     }
                 }
             }
@@ -148,7 +174,7 @@ public abstract class AbstractShell implements Shell {
         }
         else {
             if (cmdName != null && cmdName.length() > 0) {
-                System.out.println(cmdName + ": command not found");
+                loge(env, cmdName + ": command not found");
             }
         }
     }
