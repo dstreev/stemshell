@@ -31,7 +31,7 @@ public class Help extends AbstractCommand {
     }
     
 
-    public void execute(Environment env, CommandLine cmd, ConsoleReader reader) {
+    public int execute(Environment env, CommandLine cmd, ConsoleReader reader) {
         if (cmd.getArgs().length == 0) {
             for (String str : env.commandList()) {
                 log(env, str);
@@ -41,7 +41,7 @@ public class Help extends AbstractCommand {
             logv(env, "Get Help for command: " + command.getName() + "(" + command.getClass().getName() + ")");
             printHelp(command);
         }
-
+        return 0;
     }
     
     private void printHelp(Command cmd){

@@ -142,11 +142,11 @@ public abstract class AbstractShell implements Shell {
         return buffer.toString();
     }
 
-    public void processInput(String line, ConsoleReader reader) {
+    public int processInput(String line, ConsoleReader reader) {
         // Deal with args that are in quotes and don't split them.
         String[] argv = line.split("\\s+(?=((\\\\[\\\\\"]|[^\\\\\"])*\"(\\\\[\\\\\"]|[^\\\\\"])*\")*(\\\\[\\\\\"]|[^\\\\\"])*$)");
         String cmdName = argv[0];
-
+        int res = 0;
         Command command = env.getCommand(cmdName);
         if (command != null) {
 //            if (getEnv().isVerbose()) {
@@ -160,7 +160,7 @@ public abstract class AbstractShell implements Shell {
             CommandLine cl = parse(command, cmdArgs);
             if (cl != null) {
                 try {
-                    command.execute(env, cl, reader);
+                    res = command.execute(env, cl, reader);
                 }
                 catch (Throwable e) {
                     loge(env,"Command failed with error: "
@@ -177,12 +177,16 @@ public abstract class AbstractShell implements Shell {
                 loge(env, cmdName + ": command not found");
             }
         }
+        return res;
     }
 
     private void acceptCommands(ConsoleReader reader) throws IOException {
         String line;
         while ((line = reader.readLine(getEnv().getCurrentPrompt() + " ")) != null) {
-            processInput(line, reader);
+            int res = processInput(line, reader);
+            if (res != 0) {
+                log(env, "Non-Zero Return Code: " + Integer.toString(res));
+            }
         }
     }
 

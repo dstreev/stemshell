@@ -15,8 +15,9 @@ public class Exit extends AbstractCommand {
         super(name);
     }
 
-    public void execute(Environment env, CommandLine cmd, ConsoleReader reader) {
+    public int execute(Environment env, CommandLine cmd, ConsoleReader reader) {
         System.exit(0);
+        return 0;
     }
 
     @Override

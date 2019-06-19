@@ -18,7 +18,7 @@ public class Env extends AbstractCommand {
         super(name);
     }
 
-    public void execute(Environment env, CommandLine cmd, ConsoleReader reader) {
+    public int execute(Environment env, CommandLine cmd, ConsoleReader reader) {
         if (cmd.hasOption("l") || !cmd.hasOption("s")) {
             Properties props = env.getProperties();
             log(env, "Local Properties:");
@@ -33,6 +33,8 @@ public class Env extends AbstractCommand {
                 log(env, "\t" + key + "=" + props.get(key));
             }
         }
+
+        return 0;
     }
 
     @Override
