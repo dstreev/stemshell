@@ -4,6 +4,7 @@ package com.streever.tools.stemshell.commands;
 
 import java.util.ListIterator;
 
+import com.streever.tools.stemshell.command.CommandReturn;
 import jline.console.ConsoleReader;
 import jline.console.history.History.Entry;
 
@@ -19,14 +20,14 @@ public class HistoryCmd extends AbstractCommand {
     }
 
     @Override
-    public int execute(Environment env, CommandLine cmd, ConsoleReader reader) {
+    public CommandReturn execute(Environment env, CommandLine cmd, ConsoleReader reader) {
         jline.console.history.History history = reader.getHistory();
         ListIterator<Entry> it = history.entries();
         while(it.hasNext()){
             Entry entry = it.next();
             System.out.println(entry.value());
         }
-        return 0;
+        return CommandReturn.GOOD;
     }
 
 }

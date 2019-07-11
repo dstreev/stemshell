@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.jcabi.manifests.Manifests;
+import com.streever.tools.stemshell.command.CommandReturn;
 import jline.console.ConsoleReader;
 import jline.console.completer.AggregateCompleter;
 import jline.console.completer.ArgumentCompleter;
@@ -142,11 +143,11 @@ public abstract class AbstractShell implements Shell {
         return buffer.toString();
     }
 
-    public int processInput(String line, ConsoleReader reader) {
+    public CommandReturn processInput(String line, ConsoleReader reader) {
         // Deal with args that are in quotes and don't split them.
         String[] argv = line.split("\\s+(?=((\\\\[\\\\\"]|[^\\\\\"])*\"(\\\\[\\\\\"]|[^\\\\\"])*\")*(\\\\[\\\\\"]|[^\\\\\"])*$)");
         String cmdName = argv[0];
-        int res = 0;
+        CommandReturn cr = CommandReturn.GOOD;
         Command command = env.getCommand(cmdName);
         if (command != null) {
 //            if (getEnv().isVerbose()) {
@@ -160,7 +161,10 @@ public abstract class AbstractShell implements Shell {
             CommandLine cl = parse(command, cmdArgs);
             if (cl != null) {
                 try {
-                    res = command.execute(env, cl, reader);
+                    cr = command.execute(env, cl, reader);
+                    if (cr.isError()) {
+                        loge(env, cr.getSummary());
+                    }
                 }
                 catch (Throwable e) {
                     loge(env,"Command failed with error: "
@@ -177,16 +181,16 @@ public abstract class AbstractShell implements Shell {
                 loge(env, cmdName + ": command not found");
             }
         }
-        return res;
+        return cr;
     }
 
     private void acceptCommands(ConsoleReader reader) throws IOException {
         String line;
         while ((line = reader.readLine(getEnv().getCurrentPrompt() + " ")) != null) {
-            int res = processInput(line, reader);
-            if (res != 0) {
-                log(env, "Non-Zero Return Code: " + Integer.toString(res));
-            }
+            CommandReturn cr = processInput(line, reader);
+//            if (cr.isError()) {
+//                loge(env, cr.getSummary());
+//            }
         }
     }
 

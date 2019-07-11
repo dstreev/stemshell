@@ -18,7 +18,7 @@ public interface Command {
     
     String getName();
     
-    int execute(Environment env, CommandLine cmd, ConsoleReader reader);
+    CommandReturn execute(Environment env, CommandLine cmd, ConsoleReader reader);
     
     Options getOptions();
     

@@ -2,6 +2,7 @@
 
 package com.streever.tools.stemshell.commands;
 
+import com.streever.tools.stemshell.command.CommandReturn;
 import jline.console.ConsoleReader;
 import jline.console.completer.AggregateCompleter;
 import jline.console.completer.Completer;
@@ -31,7 +32,7 @@ public class Help extends AbstractCommand {
     }
     
 
-    public int execute(Environment env, CommandLine cmd, ConsoleReader reader) {
+    public CommandReturn execute(Environment env, CommandLine cmd, ConsoleReader reader) {
         if (cmd.getArgs().length == 0) {
             for (String str : env.commandList()) {
                 log(env, str);
@@ -41,7 +42,7 @@ public class Help extends AbstractCommand {
             logv(env, "Get Help for command: " + command.getName() + "(" + command.getClass().getName() + ")");
             printHelp(command);
         }
-        return 0;
+        return CommandReturn.GOOD;
     }
     
     private void printHelp(Command cmd){

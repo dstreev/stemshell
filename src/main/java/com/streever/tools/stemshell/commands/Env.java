@@ -4,6 +4,7 @@ package com.streever.tools.stemshell.commands;
 
 import java.util.Properties;
 
+import com.streever.tools.stemshell.command.CommandReturn;
 import jline.console.ConsoleReader;
 
 import org.apache.commons.cli.CommandLine;
@@ -18,7 +19,7 @@ public class Env extends AbstractCommand {
         super(name);
     }
 
-    public int execute(Environment env, CommandLine cmd, ConsoleReader reader) {
+    public CommandReturn execute(Environment env, CommandLine cmd, ConsoleReader reader) {
         if (cmd.hasOption("l") || !cmd.hasOption("s")) {
             Properties props = env.getProperties();
             log(env, "Local Properties:");
@@ -34,7 +35,7 @@ public class Env extends AbstractCommand {
             }
         }
 
-        return 0;
+        return CommandReturn.GOOD;
     }
 
     @Override
