@@ -9,6 +9,7 @@ import com.streever.tools.stemshell.commands.Env;
 import com.streever.tools.stemshell.commands.Exit;
 import com.streever.tools.stemshell.commands.Help;
 import com.streever.tools.stemshell.commands.HistoryCmd;
+import jline.console.ConsoleReader;
 
 public class ExampleShell extends AbstractShell {
 
@@ -31,6 +32,16 @@ public class ExampleShell extends AbstractShell {
         //env.setPrompt("stemshell%");
     }
 
+
+    @Override
+    protected boolean preProcessInitializationArguments(String[] arguments) {
+        return Boolean.TRUE;
+    }
+
+    @Override
+    protected boolean postProcessInitializationArguments(String[] arguments, ConsoleReader reader) {
+        return Boolean.TRUE;
+    }
 
     @Override
     public String getName() {

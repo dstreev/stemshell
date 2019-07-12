@@ -72,16 +72,15 @@ public abstract class AbstractShell implements Shell {
         System.err.println(log);
     }
 
-    protected void preProcessInitializationArguments(String[] arguments) {
-        //
-    }
+    protected abstract boolean preProcessInitializationArguments(String[] arguments);
 
-    protected void postProcessInitializationArguments(String[] arguments, ConsoleReader reader) {
-         //
-    }
+    protected abstract boolean postProcessInitializationArguments(String[] arguments, ConsoleReader reader);
 
     public final void run(String[] arguments) throws Exception {
-        preProcessInitializationArguments(arguments);
+        if (!preProcessInitializationArguments(arguments)) {
+            loge(env, "Initialization Issue");
+            return;
+        }
 
         initialize();
         
@@ -112,9 +111,11 @@ public abstract class AbstractShell implements Shell {
 
         AnsiConsole.systemInstall();
 
-        postProcessInitializationArguments(arguments, reader);
-
-        acceptCommands(reader);
+        if (postProcessInitializationArguments(arguments, reader)) {
+            acceptCommands(reader);
+        } else {
+            loge(env, "Initialization Issue.");
+        }
 
     }
 
