@@ -14,9 +14,11 @@ public interface Environment {
     Command getCommand(String name);
 
     Set<String> commandList();
-    void setProperty(String key, String value);
-    String getProperty(String key);
-    
+//    void setProperty(String key, String value);
+//
+//    String getProperty(String key);
+//    String getProperty(String key, String default);
+
     Properties getProperties();
     void setValue(String key, Object value);
     Object getValue(String key);

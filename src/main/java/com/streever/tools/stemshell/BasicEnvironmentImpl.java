@@ -15,54 +15,58 @@ public class BasicEnvironmentImpl implements Environment {
     private Boolean verbose = Boolean.FALSE;
     private Boolean debug = Boolean.FALSE;
     private Boolean silent = Boolean.FALSE;
-    
+
     private Properties props = new Properties();
     private HashMap<String, Object> values = new HashMap<String, Object>();
 
     private HashMap<String, Command> commands = new HashMap<String, Command>();
 
-    public void addCommand(Command cmd){
+    public void addCommand(Command cmd) {
         this.commands.put(cmd.getName(), cmd);
     }
-    
-    public Command getCommand(String name){
+
+    public Command getCommand(String name) {
         return this.commands.get(name);
     }
-    
-    public Set<String> commandList(){
+
+    public Set<String> commandList() {
         return this.commands.keySet();
     }
-    
-    public void setProperty(String key, String value){
-        if(value == null){
-            this.props.remove(key);
-        } else{
-            this.props.setProperty(key, value);
-        }
-    }
-    
-    public String getProperty(String key){
-        return this.props.getProperty(key);
-    }
-    
-    public Properties getProperties(){
+
+//    public void setProperty(String key, String value) {
+//        if (value == null) {
+//            this.props.remove(key);
+//        } else {
+//            this.props.setProperty(key, value);
+//        }
+//    }
+//
+//    public String getProperty(String key) {
+//        return this.props.getProperty(key);
+//    }
+//
+//    public String getProperty(String key, String default) {
+//        return this.props.getProperty(key, default);
+//    }
+
+    public Properties getProperties() {
         return this.props;
     }
-    
-    public void setValue(String key, Object value){
+
+    public void setValue(String key, Object value) {
         this.values.put(key, value);
     }
-    
-    public Object getValue(String key){
+
+    public Object getValue(String key) {
         return this.values.get(key);
     }
-    
 
-    public String getDefaultPrompt(){
+
+    public String getDefaultPrompt() {
         return this.defaultPrompt;
     }
-    
-    public void setDefaultPrompt(String prompt){
+
+    public void setDefaultPrompt(String prompt) {
         this.defaultPrompt = prompt;
     }
 
