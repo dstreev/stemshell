@@ -133,7 +133,9 @@ public abstract class AbstractShell implements Shell {
 //                    System.out.println("No replacement found for: " + matchStr);
                 }
             } catch (IllegalArgumentException iae) {
-                iae.printStackTrace();
+                //iae.printStackTrace();
+                // Couldn't locate MANIFEST Entry.
+                // Silently continue. Usually happens in IDE->run.
             }
         }
         matcher.appendTail(buffer);
