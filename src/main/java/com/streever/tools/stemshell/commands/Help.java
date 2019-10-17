@@ -32,7 +32,7 @@ public class Help extends AbstractCommand {
     }
     
 
-    public CommandReturn execute(Environment env, CommandLine cmd, ConsoleReader reader) {
+    public CommandReturn implementation(Environment env, CommandLine cmd, ConsoleReader reader) {
         if (cmd.getArgs().length == 0) {
             for (String str : env.commandList()) {
                 log(env, str);

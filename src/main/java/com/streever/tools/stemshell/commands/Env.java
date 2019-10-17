@@ -19,7 +19,7 @@ public class Env extends AbstractCommand {
         super(name);
     }
 
-    public CommandReturn execute(Environment env, CommandLine cmd, ConsoleReader reader) {
+    public CommandReturn implementation(Environment env, CommandLine cmd, ConsoleReader reader) {
         if (cmd.hasOption("l") || !cmd.hasOption("s")) {
             Properties props = env.getProperties();
             log(env, "Local Properties:");

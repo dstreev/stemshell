@@ -18,9 +18,13 @@ public interface Command {
     
     String getName();
     
-    CommandReturn execute(Environment env, CommandLine cmd, ConsoleReader reader);
-    
+    CommandReturn execute(Environment env, CommandLine cmd, ConsoleReader reader, boolean buffer);
+
+//    void processCommandLine(CommandLine commandLine);
+
     Options getOptions();
     
     Completer getCompleter();
+
+    CommandReturn implementation(Environment env, CommandLine cmd, ConsoleReader reader);
 }

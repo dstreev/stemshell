@@ -23,9 +23,13 @@
 
 package com.streever.tools.stemshell.command;
 
+import java.io.ByteArrayOutputStream;
+
 public class CommandReturn {
     private int code = 0;
     private String details = null;
+    private ByteArrayOutputStream bufferedOutputStream = null;
+//    private String commandBufferedOutput = null;
 
     public boolean isError() {
         if (code != 0)
@@ -58,6 +62,10 @@ public class CommandReturn {
         this.details = details;
     }
 
+    public ByteArrayOutputStream getBufferedOutputStream() { return bufferedOutputStream; }
+
+    public void setBufferedOutputStream(ByteArrayOutputStream buffer) { this.bufferedOutputStream = buffer; }
+
     public CommandReturn(int code) {
         this.code = code;
     }
@@ -68,5 +76,6 @@ public class CommandReturn {
     }
 
     public static CommandReturn GOOD = new CommandReturn(0);
+    public static CommandReturn BAD = new CommandReturn(-1);
 
 }

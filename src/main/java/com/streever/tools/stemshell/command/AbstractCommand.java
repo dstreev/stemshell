@@ -1,19 +1,23 @@
-// Copyright (c) 2012 P. Taylor Goetz (ptgoetz@gmail.com)
-
 package com.streever.tools.stemshell.command;
 
 import com.streever.tools.stemshell.Environment;
+import jline.console.ConsoleReader;
 import jline.console.completer.Completer;
 import jline.console.completer.NullCompleter;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 
 public abstract class AbstractCommand implements Command{
     private String name;
+
     protected Completer completer = new NullCompleter();
-    
-    
+
     public AbstractCommand(String name){
         this.name = name;
     }
@@ -30,13 +34,32 @@ public abstract class AbstractCommand implements Command{
         return name;
     }
 
-
     public Options getOptions() {
-        Options opts =  new Options();
-        opts.addOption("v", "verbose", false, "show verbose output");
-        return opts;
+        Options options =  new Options();
+
+        options.addOption("v", "verbose", false, "show verbose output");
+
+//        Option bufferOption = Option.builder("b").required(false)
+//                .argName("buffer")
+//                .desc("Buffer Output")
+//                .hasArg(false)
+//                .longOpt("buffer")
+//                .build();
+//        options.addOption(bufferOption);
+
+        return options;
     }
     
+    protected void processCommandLine(CommandLine commandLine) {
+        // TODO: Handle Verbose here
+        
+//        if (commandLine.hasOption("buffer")) {
+//            setBufferOutput(true);
+//        } else {
+//            setBufferOutput(false);
+//        }
+    }
+
     public String getUsage(){
         return getName() + " [OPTION ...] [ARGS ...]";
     }
@@ -58,4 +81,41 @@ public abstract class AbstractCommand implements Command{
     public Completer getCompleter() {
         return this.completer;
     }
+    
+    @Override
+    public CommandReturn execute(Environment env, CommandLine cmd, ConsoleReader reader, boolean buffer) {
+        CommandReturn cr = null;
+        if (buffer) {
+            PrintStream old = null;
+            try {
+                // Change Output to ByteArrayOutputStream
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                PrintStream ps = new PrintStream(baos);
+                old = System.out;
+                System.setOut(ps);
+
+                cr = implementation(env, cmd, reader);
+
+                System.out.flush();
+
+                cr.setBufferedOutputStream(baos);
+                try {
+                    baos.flush();
+                } catch (IOException io) {
+                    io.printStackTrace();
+                }
+            } finally {
+                // Revert Buffered Output
+                System.setOut(old);
+            }
+        } else {
+            cr = implementation(env, cmd, reader);
+        }
+
+        return cr;
+    }
+
+    @Override
+    public abstract CommandReturn implementation(Environment env, CommandLine cmd, ConsoleReader reader);
+
 }

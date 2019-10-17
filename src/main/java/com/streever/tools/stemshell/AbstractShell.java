@@ -2,11 +2,7 @@
 
 package com.streever.tools.stemshell;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -58,17 +54,17 @@ public abstract class AbstractShell implements Shell {
 //        getEnv().setSilent(silent);
 //    }
 
-    protected static void logv(Environment env, String log){
-        if(env.isVerbose()){
+    protected static void logv(Environment env, String log) {
+        if (env.isVerbose()) {
             System.out.println(log);
         }
     }
 
-    protected static void log(Environment env, String log){
+    protected static void log(Environment env, String log) {
         System.out.println(log);
     }
 
-    protected static void loge(Environment env, String log){
+    protected static void loge(Environment env, String log) {
         System.err.println(log);
     }
 
@@ -83,9 +79,9 @@ public abstract class AbstractShell implements Shell {
         }
 
         initialize();
-        
+
         // if the subclass hasn't defined a prompt, do so for them.
-        if(getEnv().getDefaultPrompt() == null){
+        if (getEnv().getDefaultPrompt() == null) {
             getEnv().setDefaultPrompt("$");
         }
 
@@ -145,10 +141,66 @@ public abstract class AbstractShell implements Shell {
     }
 
     public CommandReturn processInput(String line, ConsoleReader reader) {
+        CommandReturn cr = CommandReturn.GOOD;
+        // Check for Pipelining.
+        // Pipelining are used to string commands together.
+        // https://en.wikipedia.org/wiki/Pipeline_%28Unix%29
+        /*
+        This pipelining works a bit different in the sense the downstream function does
+        NOT take a stream.  So we need to iterate through the previous functions output
+        and repeatively call the next function in the pipeline.
+
+        At this time, the pipeline only support 1 redirect.
+         */
+        if (line.contains("|")) {
+            String[] commands = line.split("\\|");
+            if (commands.length > 2) {
+                loge(env, "Currently, only supporting 1 pipeline redirect");
+                cr = CommandReturn.BAD;
+            } else {
+                for (int i = 0; i < commands.length; i++) {
+                    if (i > 0) {
+                        try {
+                            BufferedReader bufferedReader = new BufferedReader(new StringReader(new String(cr.getBufferedOutputStream().toByteArray())));
+                            while ((line = bufferedReader.readLine()) != null) {
+                                // Check line for spaces.  If it has them, quote it.
+                                String adjustedLine = null;
+                                if (line.contains(" ")) {
+                                    adjustedLine = "\"" + line + "\"";
+                                } else {
+                                    adjustedLine = line;
+                                }
+                                String pipedCommand = commands[i].trim() + " " + adjustedLine;
+                                if (i == commands.length - 1) {
+                                    // Last command in pipeline
+                                    logv(env, "Pipeline Command: " + pipedCommand);
+                                    processCommand(pipedCommand, reader, false);
+                                } else {
+                                    loge(env, "Currently, only supporting 1 pipeline redirect");
+                                }
+                            }
+                        } catch (IOException io) {
+                            io.printStackTrace();
+                        }
+                    } else {
+                        // First Cycle of Pipeline
+                        cr = processCommand(commands[i], reader, true);
+                    }
+                }
+            }
+        } else {
+            cr = processCommand(line, reader, false);
+        }
+
+        return cr;
+    }
+
+    protected CommandReturn processCommand(String line, ConsoleReader reader, boolean buffer) {
         // Deal with args that are in quotes and don't split them.
         String[] argv = line.split("\\s+(?=((\\\\[\\\\\"]|[^\\\\\"])*\"(\\\\[\\\\\"]|[^\\\\\"])*\")*(\\\\[\\\\\"]|[^\\\\\"])*$)");
         String cmdName = argv[0];
         CommandReturn cr = CommandReturn.GOOD;
+
         Command command = env.getCommand(cmdName);
         if (command != null) {
 //            if (getEnv().isVerbose()) {
@@ -162,22 +214,20 @@ public abstract class AbstractShell implements Shell {
             CommandLine cl = parse(command, cmdArgs);
             if (cl != null) {
                 try {
-                    cr = command.execute(env, cl, reader);
+                    cr = command.execute(env, cl, reader, buffer);
                     if (cr.isError()) {
                         loge(env, cr.getSummary());
                     }
-                }
-                catch (Throwable e) {
-                    loge(env,"Command failed with error: "
+                } catch (Throwable e) {
+                    loge(env, "Command failed with error: "
                             + e.getMessage());
                     if (cl.hasOption("v")) {
-                        loge(env,e.getMessage());
+                        loge(env, e.getMessage());
                     }
                 }
             }
 
-        }
-        else {
+        } else {
             if (cmdName != null && cmdName.length() > 0) {
                 loge(env, cmdName + ": command not found");
             }
@@ -200,14 +250,13 @@ public abstract class AbstractShell implements Shell {
         CommandLine retval = null;
         try {
             retval = parser.parse(opts, args);
-        }
-        catch (ParseException e) {
+        } catch (ParseException e) {
             System.err.println(e.getMessage());
         }
         return retval;
     }
-    
-    private Completer initCompleters(Environment env){
+
+    private Completer initCompleters(Environment env) {
         // create completers
         ArrayList<Completer> completers = new ArrayList<Completer>();
         for (String cmdName : env.commandList()) {
@@ -227,19 +276,18 @@ public abstract class AbstractShell implements Shell {
         }
 
         AggregateCompleter aggComp = new AggregateCompleter(completers);
-        
+
         return aggComp;
     }
 
     private History initHistory() throws IOException {
         File dir = new File(System.getProperty("user.home"), "."
-                        + this.getName());
+                + this.getName());
         if (dir.exists() && dir.isFile()) {
             throw new IllegalStateException(
-                            "Default configuration file exists and is not a directory: "
-                                            + dir.getAbsolutePath());
-        }
-        else if (!dir.exists()) {
+                    "Default configuration file exists and is not a directory: "
+                            + dir.getAbsolutePath());
+        } else if (!dir.exists()) {
             dir.mkdir();
         }
         // directory created, touch history file
@@ -247,8 +295,8 @@ public abstract class AbstractShell implements Shell {
         if (!histFile.exists()) {
             if (!histFile.createNewFile()) {
                 throw new IllegalStateException(
-                                "Unable to create history file: "
-                                                + histFile.getAbsolutePath());
+                        "Unable to create history file: "
+                                + histFile.getAbsolutePath());
             }
         }
 
@@ -260,13 +308,12 @@ public abstract class AbstractShell implements Shell {
             public void run() {
                 try {
                     hist.flush();
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
-            
+
         });
 
         return hist;
