@@ -223,9 +223,16 @@ public abstract class AbstractShell implements Shell {
         String[] argv = new String[matchList.size()];
         matchList.toArray(argv);
 
+        CommandReturn cr = null;
+
+        if (matchList.size() == 0) {
+            cr = CommandReturn.BAD;
+            return cr;
+        }
+        
         String cmdName = argv[0];
 
-        CommandReturn cr = CommandReturn.GOOD;
+        cr = CommandReturn.GOOD;
 
         Command command = env.getCommand(cmdName);
         if (command != null) {
