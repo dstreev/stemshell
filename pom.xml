@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.streever.tools</groupId>
 	<artifactId>tools.stemshell</artifactId>
-	<version>1.0.6-SNAPSHOT</version>
+	<version>1.0.7-SNAPSHOT</version>
 	<name>StemShell CLI Framework</name>
 	<description>Framework for creating Java-based command line shell applications.</description>
 

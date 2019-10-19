@@ -5,6 +5,7 @@ package com.streever.tools.stemshell;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -199,8 +200,31 @@ public abstract class AbstractShell implements Shell {
 
     protected CommandReturn processCommand(String line, ConsoleReader reader, boolean buffer) {
         // Deal with args that are in quotes and don't split them.
-        String[] argv = line.split("\\s+(?=((\\\\[\\\\\"]|[^\\\\\"])*\"(\\\\[\\\\\"]|[^\\\\\"])*\")*(\\\\[\\\\\"]|[^\\\\\"])*$)");
+//        String[] argv = line.split("\\s+(?=((\\\\[\\\\\"]|[^\\\\\"])*\"(\\\\[\\\\\"]|[^\\\\\"])*\")*(\\\\[\\\\\"]|[^\\\\\"])*$)");
+//        String[] argv = line.split("[^\\s\\\"']+|\\\"([^\\\"]*)\\\"|'([^']*)'");
+//        String cmdName = argv[0];
+
+        List<String> matchList = new ArrayList<String>();
+        Pattern regex = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
+        Matcher regexMatcher = regex.matcher(line);
+        while (regexMatcher.find()) {
+            if (regexMatcher.group(1) != null) {
+                // Add double-quoted string without the quotes
+                matchList.add(regexMatcher.group(1));
+            } else if (regexMatcher.group(2) != null) {
+                // Add single-quoted string without the quotes
+                matchList.add(regexMatcher.group(2));
+            } else {
+                // Add unquoted word
+                matchList.add(regexMatcher.group());
+            }
+        }
+
+        String[] argv = new String[matchList.size()];
+        matchList.toArray(argv);
+
         String cmdName = argv[0];
+
         CommandReturn cr = CommandReturn.GOOD;
 
         Command command = env.getCommand(cmdName);
