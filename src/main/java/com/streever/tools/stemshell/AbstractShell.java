@@ -112,6 +112,7 @@ public abstract class AbstractShell implements Shell {
             acceptCommands(reader);
         } else {
             loge(env, "Initialization Issue.");
+            processInput("exit", reader);
         }
 
     }
