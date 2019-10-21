@@ -78,6 +78,12 @@ public abstract class AbstractCommand implements Command{
         System.err.println(log);
     }
 
+    protected static void logd(Environment env, String log){
+        if(env.isDebug()){
+            System.out.println(log);
+        }
+    }
+
     public Completer getCompleter() {
         return this.completer;
     }

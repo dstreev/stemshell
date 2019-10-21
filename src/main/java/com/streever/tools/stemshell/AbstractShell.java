@@ -251,6 +251,8 @@ public abstract class AbstractShell implements Shell {
                     cr = command.execute(env, cl, reader, buffer);
                     if (cr.isError()) {
                         loge(env, cr.getSummary());
+                    } else if (cr.isMessage()) {
+                        logv(env, cr.getSummary());
                     }
                 } catch (Throwable e) {
                     loge(env, "Command failed with error: "

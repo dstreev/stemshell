@@ -32,7 +32,14 @@ public class CommandReturn {
 //    private String commandBufferedOutput = null;
 
     public boolean isError() {
-        if (code != 0)
+        if (code < 0)
+            return true;
+        else
+            return false;
+    }
+
+    public boolean isMessage() {
+        if (code > 0)
             return true;
         else
             return false;
@@ -42,7 +49,7 @@ public class CommandReturn {
         StringBuilder sb = new StringBuilder();
         if (details != null)
             sb.append(getDetails()).append("\t");
-        sb.append(getClass());
+        //sb.append(getClass());
         return sb.toString();
     }
 
